@@ -1,10 +1,11 @@
 import express from 'express'
 import db from '../db/index.js'
 import multer from 'multer';
-import { getAllUser, addUser, getArticle, getPoem, getGallery } from '../controller/user_ctrl.js'
+import { getAllUser, addUser, getArticle, getPoem, getGallery, getTags } from '../controller/user_ctrl.js'
 import path from 'path'
 import { fileURLToPath } from 'url'; // 引入 fileURLToPath 函数
 import  jwt  from 'jsonwebtoken';
+import { error } from 'console';
 
 const jwtSecretKey = 'your-secret-key';
 
@@ -196,7 +197,6 @@ router.post('/gallery/status/:id',async (req,res)=>{
   const {status} = req.body;
   const values = [status ,id]
   const sql = 'UPDATE gallery SET status = ? WHERE id = ?;'
-
   try {
     await db.query(sql, values);
     console.log('change status successfully!');
@@ -207,5 +207,52 @@ router.post('/gallery/status/:id',async (req,res)=>{
   }
   
 })
+// tags相关api
+router.get('/tags', getTags)
+router.post('/tags',async (req,res)=>{
+  const {tag,update_time} = req.body
+  const sql = 'INSERT INTO tags (tag, update_time) VALUES(?,?)'
+  const values = [tag, update_time]
+  console.log(tag);
+  console.log(req.body);
+  try{
+    await db.query(sql, values)
+    console.log('add a tag successfully!');
+    res.json({ message: 'add successfully!' });
+  }catch (error) {
+    console.error('Error add', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
+// 删除特定tag的api
+router.delete('/tags/:id', async (req,res)=>{
+  const id = req.params.id;
+  const sql = 'DELETE FROM tags WHERE id = ?;'
 
+  try{
+    await db.query(sql,id)
+    console.log('delete this tag successfully');
+    res.json({message:'delete the tag successfully'})
+  } catch (e){
+    console.error('error delet', e);
+    res.status(500).json({error:'Internal server error'})
+  }
+})
+// 修改tag标签
+router.patch('/tags/:id', async (req,res)=>{
+  const id = req.params.id
+  const {tag, update_time} = req.body
+
+  const sql = 'UPDATE tags SET tag = ?, update_time = ? WHERE id = ?'
+  const value = [ tag, update_time, id]
+
+  try {
+    await db.query(sql,value)
+    console.log('updated tag');
+    res.json({message:'data uptated'})
+  } catch(e){
+    console.error('error update',error);
+    res.status(500).json({error:'server error'})
+  }
+})
 export default router;

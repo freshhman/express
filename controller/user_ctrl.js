@@ -95,3 +95,20 @@ export async function getGallery(req,res){
         })
     }
 }
+// tags相关接口
+export async function getTags(req,res){
+    try{
+        const [rows] = await db.query('select * from tags')
+        res.send({
+            status :1,
+            message:'获取tags成功',
+            data:rows
+        })
+    }catch (e){
+        res.send({
+            status:1,
+            message:'获取tags失败',
+            desc :e.message
+        })
+    }
+}
