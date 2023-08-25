@@ -112,3 +112,56 @@ export async function getTags(req,res){
         })
     }
 }
+
+// 获取category的api
+export async function getCategory(req, res){
+    try{
+        const [rows] = await db.query('select * from category_table')
+        res.send({
+            status:1,
+            message:'获取category数据成功',
+            data:rows
+        })
+    } catch(e){
+        res.send({
+            status:1,
+            message:'获取category数据失败',
+            desc:e.message
+        })
+    }
+}
+
+export async function getComment(req,res){
+    try{
+        const [rows] = await db.query('select * from comments')
+        res.send({
+            status:0,
+            message:'获取category数据成功',
+            data:rows
+        })
+    }catch(e){
+        res.send({
+            status:1,
+            message:'获取category数据失败',
+            desc:e.message
+        })
+    }
+}
+
+// 获取setting 的api
+export async function getSetting (req,res){
+    try{
+        const [rows] = await db.query('select * from settings')
+        res.send({
+            status:0,
+            message:'获取数据成功',
+            data:rows
+        })
+    } catch(e){
+        res.send({
+            status:1,
+            message:'settings数据失败',
+            desc:e.message
+        }) 
+    }
+}
